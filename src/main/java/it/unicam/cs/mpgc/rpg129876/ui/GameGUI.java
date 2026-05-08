@@ -1,14 +1,15 @@
 package it.unicam.cs.mpgc.rpg129876.ui;
 
+import it.unicam.cs.mpgc.rpg129876.game.Direzione;
 import it.unicam.cs.mpgc.rpg129876.game.GameManager;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 
 public class GameGUI extends Application {
 
@@ -26,28 +27,70 @@ public class GameGUI extends Application {
         TextArea gameLog = new TextArea();
         gameLog.setEditable(false);
 
-        Runnable aggiornaHUD = () -> {
+        Button northButton = new Button("Nord");
+        Button southButton = new Button("Sud");
+        Button eastButton = new Button("Est");
+        Button westButton = new Button("Ovest");
 
-            hpLabel.setText(
-                    "HP: " + gameManager.getGiocatore().getVita());
-
-            livelloLabel.setText(
-                    "Livello: " + gameManager.getGiocatore().getLivello());
-
-            esperienzaLabel.setText(
-                    "EXP: " + gameManager.getGiocatore().getEsperienza());
-        };
-
-        aggiornaHUD.run();
-
-        Button exploreButton = new Button("Esplora Dungeon");
         Button attackButton = new Button("Attacca");
         Button healButton = new Button("Cura");
         Button fleeButton = new Button("Fuggi");
 
-        exploreButton.setOnAction(e -> {
+        Runnable aggiornaHUD = () -> {
 
-            for (String line : gameManager.esploraStanza()) {
+            hpLabel.setText(
+                    "HP: " +
+                            gameManager.getGiocatore().getVita());
+
+            livelloLabel.setText(
+                    "Livello: " +
+                            gameManager.getGiocatore().getLivello());
+
+            esperienzaLabel.setText(
+                    "EXP: " +
+                            gameManager.getGiocatore().getEsperienza());
+        };
+
+        aggiornaHUD.run();
+
+        northButton.setOnAction(e -> {
+
+            for (String line :
+                    gameManager.muovi(Direzione.NORD)) {
+
+                gameLog.appendText(line + "\n");
+            }
+
+            aggiornaHUD.run();
+        });
+
+        southButton.setOnAction(e -> {
+
+            for (String line :
+                    gameManager.muovi(Direzione.SUD)) {
+
+                gameLog.appendText(line + "\n");
+            }
+
+            aggiornaHUD.run();
+        });
+
+        eastButton.setOnAction(e -> {
+
+            for (String line :
+                    gameManager.muovi(Direzione.EST)) {
+
+                gameLog.appendText(line + "\n");
+            }
+
+            aggiornaHUD.run();
+        });
+
+        westButton.setOnAction(e -> {
+
+            for (String line :
+                    gameManager.muovi(Direzione.OVEST)) {
+
                 gameLog.appendText(line + "\n");
             }
 
@@ -57,6 +100,7 @@ public class GameGUI extends Application {
         attackButton.setOnAction(e -> {
 
             for (String line : gameManager.attacca()) {
+
                 gameLog.appendText(line + "\n");
             }
 
@@ -66,6 +110,7 @@ public class GameGUI extends Application {
         healButton.setOnAction(e -> {
 
             for (String line : gameManager.cura()) {
+
                 gameLog.appendText(line + "\n");
             }
 
@@ -75,11 +120,21 @@ public class GameGUI extends Application {
         fleeButton.setOnAction(e -> {
 
             for (String line : gameManager.fuggi()) {
+
                 gameLog.appendText(line + "\n");
             }
 
             aggiornaHUD.run();
         });
+
+        HBox movementButtons = new HBox(10);
+
+        movementButtons.getChildren().addAll(
+                northButton,
+                southButton,
+                eastButton,
+                westButton
+        );
 
         HBox combatButtons = new HBox(10);
 
@@ -95,15 +150,17 @@ public class GameGUI extends Application {
                 hpLabel,
                 livelloLabel,
                 esperienzaLabel,
-                gameLog,
-                exploreButton,
-                combatButtons
+                movementButtons,
+                combatButtons,
+                gameLog
         );
 
-        Scene scene = new Scene(root, 700, 500);
+        Scene scene = new Scene(root, 800, 600);
 
         stage.setTitle("Echoes of the Forgotten Dungeon");
+
         stage.setScene(scene);
+
         stage.show();
     }
 }

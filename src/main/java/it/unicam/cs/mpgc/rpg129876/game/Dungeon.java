@@ -1,71 +1,59 @@
 package it.unicam.cs.mpgc.rpg129876.game;
 
-import it.unicam.cs.mpgc.rpg129876.model.Nemico;
-import it.unicam.cs.mpgc.rpg129876.game.Evento;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class Dungeon {
 
-    private List<Stanza> stanze;
-    private int posizioneCorrente;
+    private Stanza stanzaCorrente;
 
     public Dungeon() {
-        stanze = new ArrayList<>();
-        posizioneCorrente = 0;
 
-        generaDungeon();
-    }
-
-    private void generaDungeon() {
-
-        stanze.add(new Stanza(
+        Stanza ingresso = new Stanza(
                 "Ingresso",
-                "L'ingresso del dungeon è freddo e silenzioso.",
-                null,
-                new Evento(
-                        "Antico Portale",
-                        "Un enorme portale alle tue spalle si chiude lentamente."
-                )
-        ));
+                "L'entrata del dungeon."
+        );
 
-        stanze.add(new Stanza(
-                "Sala delle Ossa",
-                "Ossa umane ricoprono il pavimento.",
-                new Nemico("Scheletro", 40, 6),
-                new Evento(
-                        "Sussurri",
-                        "Voci lontane sembrano chiamare il tuo nome."
-                )
-        ));
+        Stanza corridoio = new Stanza(
+                "Corridoio",
+                "Un corridoio oscuro e silenzioso."
+        );
 
-        stanze.add(new Stanza(
-                "Corridoio Oscuro",
-                "Un lungo corridoio immerso nell'oscurità.",
-                new Nemico("Goblin", 50, 8),
-                new Evento(
-                        "Simbolo Misterioso",
-                        "Un simbolo rosso pulsa sulle pareti del dungeon."
-                )
-        ));
+        Stanza tesoro = new Stanza(
+                "Tesoro",
+                "Una stanza piena di oro e reliquie."
+        );
+
+        Stanza boss = new Stanza(
+                "Boss Room",
+                "Una presenza terrificante riempie la stanza."
+        );
+
+        ingresso.collegaStanza(Direzione.NORD, corridoio);
+
+        corridoio.collegaStanza(Direzione.SUD, ingresso);
+        corridoio.collegaStanza(Direzione.EST, tesoro);
+        corridoio.collegaStanza(Direzione.NORD, boss);
+
+        tesoro.collegaStanza(Direzione.OVEST, corridoio);
+
+        boss.collegaStanza(Direzione.SUD, corridoio);
+
+        stanzaCorrente = ingresso;
     }
 
     public Stanza getStanzaCorrente() {
-        return stanze.get(posizioneCorrente);
+        return stanzaCorrente;
     }
 
-    public boolean avanza() {
+    public boolean muovi(Direzione direzione) {
 
-        if (posizioneCorrente < stanze.size() - 1) {
-            posizioneCorrente++;
-            return true;
+        Stanza prossima =
+                stanzaCorrente.getStanza(direzione);
+
+        if (prossima == null) {
+            return false;
         }
 
-        return false;
-    }
+        stanzaCorrente = prossima;
 
-    public boolean dungeonCompletato() {
-        return posizioneCorrente == stanze.size() - 1;
+        return true;
     }
 }

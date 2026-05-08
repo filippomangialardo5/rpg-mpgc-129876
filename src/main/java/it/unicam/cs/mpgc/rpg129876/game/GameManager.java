@@ -45,8 +45,6 @@ public class GameManager {
             output.add("Il combattimento ha inizio!");
         }
 
-        dungeon.avanza();
-
         return output;
     }
 
@@ -127,6 +125,29 @@ public class GameManager {
         nemicoCorrente = null;
 
         output.add("Sei fuggito dal combattimento.");
+
+        return output;
+    }
+
+    public List<String> muovi(Direzione direzione) {
+
+        List<String> output = new ArrayList<>();
+
+        if (inCombattimento) {
+            output.add("Non puoi fuggire dalla stanza durante un combattimento!");
+            return output;
+        }
+
+        boolean successo = dungeon.muovi(direzione);
+
+        if (!successo) {
+            output.add("Non puoi andare in quella direzione.");
+            return output;
+        }
+
+        output.add("Ti muovi verso " + direzione);
+
+        output.addAll(esploraStanza());
 
         return output;
     }
