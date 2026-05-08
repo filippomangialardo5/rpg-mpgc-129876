@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.scene.control.Label;
 
 public class GameGUI extends Application {
 
@@ -17,8 +18,26 @@ public class GameGUI extends Application {
 
         gameManager = new GameManager();
 
+        Label hpLabel = new Label();
+        Label livelloLabel = new Label();
+        Label esperienzaLabel = new Label();
+
         TextArea gameLog = new TextArea();
         gameLog.setEditable(false);
+
+        Runnable aggiornaHUD = () -> {
+
+            hpLabel.setText(
+                    "HP: " + gameManager.getGiocatore().getVita());
+
+            livelloLabel.setText(
+                    "Livello: " + gameManager.getGiocatore().getLivello());
+
+            esperienzaLabel.setText(
+                    "EXP: " + gameManager.getGiocatore().getEsperienza());
+        };
+
+        aggiornaHUD.run();
 
         Button exploreButton = new Button("Esplora Dungeon");
 
@@ -27,10 +46,19 @@ public class GameGUI extends Application {
             for (String line : gameManager.esploraStanza()) {
                 gameLog.appendText(line + "\n");
             }
+
+            aggiornaHUD.run();
         });
 
         VBox root = new VBox(10);
-        root.getChildren().addAll(gameLog, exploreButton);
+
+        root.getChildren().addAll(
+                hpLabel,
+                livelloLabel,
+                esperienzaLabel,
+                gameLog,
+                exploreButton
+        );
 
         Scene scene = new Scene(root, 700, 500);
 

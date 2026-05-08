@@ -8,6 +8,7 @@ public class Giocatore extends Personaggio {
     private int livello;
     private Inventario inventario;
 
+
     public Giocatore(String nome) {
         super(nome, 100, 10);
         this.esperienza = 0;
@@ -28,6 +29,10 @@ public class Giocatore extends Personaggio {
 
     public int getLivello() {
         return livello;
+    }
+
+    public int getEsperienza() {
+        return esperienza;
     }
 
     public Inventario getInventario() {

@@ -47,4 +47,8 @@ public class GameManager {
 
         return output;
     }
+
+    public Giocatore getGiocatore() {
+        return giocatore;
+    }
 }
