@@ -8,6 +8,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 
 public class GameGUI extends Application {
 
@@ -40,6 +41,9 @@ public class GameGUI extends Application {
         aggiornaHUD.run();
 
         Button exploreButton = new Button("Esplora Dungeon");
+        Button attackButton = new Button("Attacca");
+        Button healButton = new Button("Cura");
+        Button fleeButton = new Button("Fuggi");
 
         exploreButton.setOnAction(e -> {
 
@@ -50,6 +54,41 @@ public class GameGUI extends Application {
             aggiornaHUD.run();
         });
 
+        attackButton.setOnAction(e -> {
+
+            for (String line : gameManager.attacca()) {
+                gameLog.appendText(line + "\n");
+            }
+
+            aggiornaHUD.run();
+        });
+
+        healButton.setOnAction(e -> {
+
+            for (String line : gameManager.cura()) {
+                gameLog.appendText(line + "\n");
+            }
+
+            aggiornaHUD.run();
+        });
+
+        fleeButton.setOnAction(e -> {
+
+            for (String line : gameManager.fuggi()) {
+                gameLog.appendText(line + "\n");
+            }
+
+            aggiornaHUD.run();
+        });
+
+        HBox combatButtons = new HBox(10);
+
+        combatButtons.getChildren().addAll(
+                attackButton,
+                healButton,
+                fleeButton
+        );
+
         VBox root = new VBox(10);
 
         root.getChildren().addAll(
@@ -57,7 +96,8 @@ public class GameGUI extends Application {
                 livelloLabel,
                 esperienzaLabel,
                 gameLog,
-                exploreButton
+                exploreButton,
+                combatButtons
         );
 
         Scene scene = new Scene(root, 700, 500);

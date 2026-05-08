@@ -1,6 +1,7 @@
 package it.unicam.cs.mpgc.rpg129876.game;
 
 import it.unicam.cs.mpgc.rpg129876.model.Giocatore;
+import it.unicam.cs.mpgc.rpg129876.model.Nemico;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,10 +10,13 @@ public class GameManager {
 
     private Giocatore giocatore;
     private Dungeon dungeon;
+    private Nemico nemicoCorrente;
+    private boolean inCombattimento;
 
     public GameManager() {
         giocatore = new Giocatore("Eroe");
         dungeon = new Dungeon();
+        inCombattimento=false;
     }
 
     public List<String> esploraStanza() {
@@ -35,12 +39,10 @@ public class GameManager {
             output.add("Un nemico appare: "
                     + stanza.getNemico().getNome());
 
-            Combattimento combattimento =
-                    new Combattimento(giocatore, stanza.getNemico());
+            nemicoCorrente = stanza.getNemico();
+            inCombattimento = true;
 
-            combattimento.eseguiCombattimento();
-
-            output.addAll(combattimento.getLog());
+            output.add("Il combattimento ha inizio!");
         }
 
         dungeon.avanza();
@@ -50,5 +52,82 @@ public class GameManager {
 
     public Giocatore getGiocatore() {
         return giocatore;
+    }
+
+    public boolean isInCombattimento() {
+        return inCombattimento;
+    }
+
+    public List<String> attacca() {
+
+        List<String> output = new ArrayList<>();
+
+        if (!inCombattimento) {
+            output.add("Nessun nemico presente.");
+            return output;
+        }
+
+        int dannoGiocatore = giocatore.getAttacco();
+        nemicoCorrente.subisciDanno(dannoGiocatore);
+
+        output.add("Hai inflitto "
+                + dannoGiocatore
+                + " danni a "
+                + nemicoCorrente.getNome());
+
+        if (!nemicoCorrente.isVivo()) {
+
+            output.add("Hai sconfitto il nemico!");
+
+            giocatore.guadagnaEsperienza(50);
+
+            inCombattimento = false;
+            nemicoCorrente = null;
+
+            return output;
+        }
+
+        int dannoNemico = nemicoCorrente.getAttacco();
+
+        giocatore.subisciDanno(dannoNemico);
+
+        output.add(nemicoCorrente.getNome()
+                + " ti colpisce per "
+                + dannoNemico
+                + " danni.");
+
+        if (!giocatore.isVivo()) {
+            output.add("GAME OVER");
+        }
+
+        return output;
+    }
+
+    public List<String> cura() {
+
+        List<String> output = new ArrayList<>();
+
+        giocatore.cura(20);
+
+        output.add("Hai recuperato 20 HP.");
+
+        return output;
+    }
+
+    public List<String> fuggi() {
+
+        List<String> output = new ArrayList<>();
+
+        if (!inCombattimento) {
+            output.add("Non c'è nessun nemico.");
+            return output;
+        }
+
+        inCombattimento = false;
+        nemicoCorrente = null;
+
+        output.add("Sei fuggito dal combattimento.");
+
+        return output;
     }
 }

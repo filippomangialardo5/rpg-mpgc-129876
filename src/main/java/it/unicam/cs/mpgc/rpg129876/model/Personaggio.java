@@ -18,17 +18,6 @@ public abstract class Personaggio {
         nemico.subisciDanno(this.attacco);
     }
 
-    public void subisciDanno(int danno) {
-        this.vita -= danno;
-        if (this.vita < 0) {
-            this.vita = 0;
-        }
-    }
-
-    public boolean isVivo() {
-        return vita > 0;
-    }
-
     public String getNome() {
         return nome;
     }
@@ -41,7 +30,15 @@ public abstract class Personaggio {
         return attacco;
     }
 
-    public void cura(int puntiVita) {
-        this.vita += puntiVita;
+    public void subisciDanno(int danno) {
+        vita -= danno;
+
+        if (vita < 0) {
+            vita = 0;
+        }
     }
+
+    public void cura(int valore) {vita += valore;}
+
+    public boolean isVivo() {return vita > 0;}
 }
