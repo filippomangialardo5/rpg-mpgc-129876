@@ -1,24 +1,32 @@
 package it.unicam.cs.mpgc.rpg129876.ui;
 
-import it.unicam.cs.mpgc.rpg129876.game.Direzione;
 import it.unicam.cs.mpgc.rpg129876.game.GameManager;
+import it.unicam.cs.mpgc.rpg129876.map.GameMap;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 public class GameGUI extends Application {
 
     private GameManager gameManager;
 
+    private GameMap gameMap;
+
     @Override
     public void start(Stage stage) {
 
         gameManager = new GameManager();
+
+        gameMap = new GameMap();
 
         Label hpLabel = new Label();
         Label livelloLabel = new Label();
@@ -26,6 +34,8 @@ public class GameGUI extends Application {
 
         TextArea gameLog = new TextArea();
         gameLog.setEditable(false);
+
+        GridPane mapGrid = new GridPane();
 
         Button northButton = new Button("Nord");
         Button southButton = new Button("Sud");
@@ -39,62 +49,91 @@ public class GameGUI extends Application {
         Runnable aggiornaHUD = () -> {
 
             hpLabel.setText(
-                    "HP: " +
-                            gameManager.getGiocatore().getVita());
+                    "HP: "
+                            + gameManager.getGiocatore().getVita());
 
             livelloLabel.setText(
-                    "Livello: " +
-                            gameManager.getGiocatore().getLivello());
+                    "Livello: "
+                            + gameManager.getGiocatore().getLivello());
 
             esperienzaLabel.setText(
-                    "EXP: " +
-                            gameManager.getGiocatore().getEsperienza());
+                    "EXP: "
+                            + gameManager.getGiocatore().getEsperienza());
+        };
+
+        Runnable renderMap = () -> {
+
+            mapGrid.getChildren().clear();
+
+            int[][] map = gameMap.getMap();
+
+            for (int row = 0; row < map.length; row++) {
+
+                for (int col = 0; col < map[row].length; col++) {
+
+                    Rectangle tile = new Rectangle(40, 40);
+
+                    switch (map[row][col]) {
+
+                        case 0:
+                            tile.setFill(Color.LIGHTGRAY);
+                            break;
+
+                        case 1:
+                            tile.setFill(Color.DARKSLATEGRAY);
+                            break;
+
+                        case 2:
+                            tile.setFill(Color.DEEPSKYBLUE);
+                            break;
+
+                        case 3:
+                            tile.setFill(Color.CRIMSON);
+                            break;
+
+                        case 4:
+                            tile.setFill(Color.GOLD);
+                            break;
+
+                        default:
+                            tile.setFill(Color.BLACK);
+                    }
+
+                    mapGrid.add(tile, col, row);
+                }
+            }
         };
 
         aggiornaHUD.run();
 
+        renderMap.run();
+
         northButton.setOnAction(e -> {
 
-            for (String line :
-                    gameManager.muovi(Direzione.NORD)) {
+            gameMap.movePlayer(-1, 0);
 
-                gameLog.appendText(line + "\n");
-            }
-
-            aggiornaHUD.run();
+            renderMap.run();
         });
 
         southButton.setOnAction(e -> {
 
-            for (String line :
-                    gameManager.muovi(Direzione.SUD)) {
+            gameMap.movePlayer(1, 0);
 
-                gameLog.appendText(line + "\n");
-            }
-
-            aggiornaHUD.run();
+            renderMap.run();
         });
 
         eastButton.setOnAction(e -> {
 
-            for (String line :
-                    gameManager.muovi(Direzione.EST)) {
+            gameMap.movePlayer(0, 1);
 
-                gameLog.appendText(line + "\n");
-            }
-
-            aggiornaHUD.run();
+            renderMap.run();
         });
 
         westButton.setOnAction(e -> {
 
-            for (String line :
-                    gameManager.muovi(Direzione.OVEST)) {
+            gameMap.movePlayer(0, -1);
 
-                gameLog.appendText(line + "\n");
-            }
-
-            aggiornaHUD.run();
+            renderMap.run();
         });
 
         attackButton.setOnAction(e -> {
@@ -152,10 +191,11 @@ public class GameGUI extends Application {
                 esperienzaLabel,
                 movementButtons,
                 combatButtons,
+                mapGrid,
                 gameLog
         );
 
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root, 800, 700);
 
         stage.setTitle("Echoes of the Forgotten Dungeon");
 
