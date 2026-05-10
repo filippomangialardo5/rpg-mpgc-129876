@@ -11,9 +11,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class GameGUI extends Application {
 
@@ -27,6 +27,26 @@ public class GameGUI extends Application {
         gameManager = new GameManager();
 
         gameMap = new GameMap();
+
+        Image wallImage =
+                new Image(getClass().getResourceAsStream(
+                        "/sprites/wall.png"));
+
+        Image floorImage =
+                new Image(getClass().getResourceAsStream(
+                        "/sprites/floor.png"));
+
+        Image playerImage =
+                new Image(getClass().getResourceAsStream(
+                        "/sprites/player.png"));
+
+        Image enemyImage =
+                new Image(getClass().getResourceAsStream(
+                        "/sprites/enemy.png"));
+
+        Image treasureImage =
+                new Image(getClass().getResourceAsStream(
+                        "/sprites/treasure.png"));
 
         Label hpLabel = new Label();
         Label livelloLabel = new Label();
@@ -71,35 +91,35 @@ public class GameGUI extends Application {
 
                 for (int col = 0; col < map[row].length; col++) {
 
-                    Rectangle tile = new Rectangle(40, 40);
+                    ImageView tileView = new ImageView();
 
                     switch (map[row][col]) {
 
                         case 0:
-                            tile.setFill(Color.LIGHTGRAY);
+                            tileView.setImage(floorImage);
                             break;
 
                         case 1:
-                            tile.setFill(Color.DARKSLATEGRAY);
+                            tileView.setImage(wallImage);
                             break;
 
                         case 2:
-                            tile.setFill(Color.DEEPSKYBLUE);
+                            tileView.setImage(playerImage);
                             break;
 
                         case 3:
-                            tile.setFill(Color.CRIMSON);
+                            tileView.setImage(enemyImage);
                             break;
 
                         case 4:
-                            tile.setFill(Color.GOLD);
+                            tileView.setImage(treasureImage);
                             break;
-
-                        default:
-                            tile.setFill(Color.BLACK);
                     }
 
-                    mapGrid.add(tile, col, row);
+                    tileView.setFitWidth(48);
+                    tileView.setFitHeight(48);
+
+                    mapGrid.add(tileView, col, row);
                 }
             }
         };
