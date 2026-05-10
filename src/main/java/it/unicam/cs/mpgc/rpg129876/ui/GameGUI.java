@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 
 public class GameGUI extends Application {
 
@@ -186,14 +187,6 @@ public class GameGUI extends Application {
             aggiornaHUD.run();
         });
 
-        HBox movementButtons = new HBox(10);
-
-        movementButtons.getChildren().addAll(
-                northButton,
-                southButton,
-                eastButton,
-                westButton
-        );
 
         HBox combatButtons = new HBox(10);
 
@@ -209,13 +202,38 @@ public class GameGUI extends Application {
                 hpLabel,
                 livelloLabel,
                 esperienzaLabel,
-                movementButtons,
                 combatButtons,
                 mapGrid,
                 gameLog
         );
 
         Scene scene = new Scene(root, 800, 700);
+
+        scene.setOnKeyPressed(event -> {
+
+            KeyCode key = event.getCode();
+
+            switch (key) {
+
+                case W:
+                    gameMap.movePlayer(-1, 0);
+                    break;
+
+                case S:
+                    gameMap.movePlayer(1, 0);
+                    break;
+
+                case A:
+                    gameMap.movePlayer(0, -1);
+                    break;
+
+                case D:
+                    gameMap.movePlayer(0, 1);
+                    break;
+            }
+
+            renderMap.run();
+        });
 
         stage.setTitle("Echoes of the Forgotten Dungeon");
 
