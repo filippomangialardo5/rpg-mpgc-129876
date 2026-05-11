@@ -72,6 +72,7 @@ public class GameGUI extends Application {
         Button attackButton = new Button("Attacca");
         Button healButton = new Button("Cura");
         Button fleeButton = new Button("Fuggi");
+        Button potionButton = new Button("Usa Pozione");
 
         Runnable aggiornaHUD = () -> {
 
@@ -212,13 +213,33 @@ public class GameGUI extends Application {
             aggiornaHUD.run();
         });
 
+        potionButton.setOnAction(e -> {
+
+            boolean used =
+                    gameManager.getGiocatore()
+                            .usaPozione();
+
+            if (used) {
+
+                gameLog.appendText(
+                        "Hai usato una pozione!\n");
+
+            } else {
+
+                gameLog.appendText(
+                        "Non hai pozioni!\n");
+            }
+
+            aggiornaHUD.run();
+        });
 
         HBox combatButtons = new HBox(10);
 
         combatButtons.getChildren().addAll(
                 attackButton,
                 healButton,
-                fleeButton
+                fleeButton,
+                potionButton
         );
 
         VBox root = new VBox(10);

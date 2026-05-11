@@ -26,6 +26,11 @@ public abstract class Personaggio {
         return vita;
     }
 
+    public void setVita(int vita) {
+
+        this.vita = vita;
+    }
+
     public int getAttacco() {
         return attacco;
     }

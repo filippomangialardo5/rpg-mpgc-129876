@@ -3,6 +3,7 @@ package it.unicam.cs.mpgc.rpg129876.model;
 import it.unicam.cs.mpgc.rpg129876.game.Inventario;
 import it.unicam.cs.mpgc.rpg129876.item.Item;
 import it.unicam.cs.mpgc.rpg129876.item.Weapon;
+import it.unicam.cs.mpgc.rpg129876.item.ItemType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,5 +73,27 @@ public class Giocatore extends Personaggio {
         }
 
         return getAttacco() + bonus;
+    }
+
+    public boolean usaPozione() {
+
+        for (int i = 0;
+             i < inventario.size();
+             i++) {
+
+            Item item = inventario.get(i);
+
+            if (item.getTipo()
+                    == ItemType.POTION) {
+
+                inventario.remove(i);
+
+                setVita(getVita() + 20);
+
+                return true;
+            }
+        }
+
+        return false;
     }
 }
