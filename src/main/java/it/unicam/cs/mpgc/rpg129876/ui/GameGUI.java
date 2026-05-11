@@ -16,6 +16,8 @@ import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import it.unicam.cs.mpgc.rpg129876.item.Item;
+import it.unicam.cs.mpgc.rpg129876.item.ItemType;
 
 public class GameGUI extends Application {
 
@@ -53,6 +55,7 @@ public class GameGUI extends Application {
         Label hpLabel = new Label();
         Label livelloLabel = new Label();
         Label esperienzaLabel = new Label();
+        Label inventarioLabel = new Label();
 
         TextArea gameLog = new TextArea();
         gameLog.setEditable(false);
@@ -81,6 +84,11 @@ public class GameGUI extends Application {
             esperienzaLabel.setText(
                     "EXP: "
                             + gameManager.getGiocatore().getEsperienza());
+
+            inventarioLabel.setText(
+                    "Inventario: "
+                            + gameManager.getGiocatore()
+                            .getInventario());
         };
 
         Runnable renderMap = () -> {
@@ -203,6 +211,7 @@ public class GameGUI extends Application {
                 hpLabel,
                 livelloLabel,
                 esperienzaLabel,
+                inventarioLabel,
                 combatButtons,
                 mapGrid,
                 gameLog
@@ -241,6 +250,12 @@ public class GameGUI extends Application {
 
                             gameLog.appendText(
                                     "Hai trovato un tesoro!\n");
+                            Item potion = new Item(
+                                    "Pozione",
+                                    ItemType.POTION);
+
+                            gameManager.getGiocatore()
+                                    .aggiungiItem(potion);
 
                             break;
 

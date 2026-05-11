@@ -1,19 +1,23 @@
 package it.unicam.cs.mpgc.rpg129876.model;
 
 import it.unicam.cs.mpgc.rpg129876.game.Inventario;
+import it.unicam.cs.mpgc.rpg129876.item.Item;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Giocatore extends Personaggio {
 
     private int esperienza;
     private int livello;
-    private Inventario inventario;
+    private List<Item> inventario;
 
 
     public Giocatore(String nome) {
         super(nome, 100, 10);
         this.esperienza = 0;
         this.livello = 1;
-        this.inventario = new Inventario();
+        inventario = new ArrayList<>();
     }
 
     public void guadagnaEsperienza(int exp) {
@@ -35,7 +39,13 @@ public class Giocatore extends Personaggio {
         return esperienza;
     }
 
-    public Inventario getInventario() {
+    public void aggiungiItem(Item item) {
+
+        inventario.add(item);
+    }
+
+    public List<Item> getInventario() {
+
         return inventario;
     }
 }
