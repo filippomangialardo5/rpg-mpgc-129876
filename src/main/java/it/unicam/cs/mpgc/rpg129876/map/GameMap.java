@@ -36,13 +36,43 @@ public class GameMap {
         return playerCol;
     }
 
-    public boolean movePlayer(int dRow, int dCol) {
+    public MoveResult movePlayer(int dRow, int dCol) {
 
         int newRow = playerRow + dRow;
         int newCol = playerCol + dCol;
 
-        if (map[newRow][newCol] == 1) {
-            return false;
+        int destination = map[newRow][newCol];
+
+        if (destination == 1) {
+            return MoveResult.WALL;
+        }
+
+        if (destination == 3) {
+
+            map[newRow][newCol] = 0;
+
+            map[playerRow][playerCol] = 0;
+
+            playerRow = newRow;
+            playerCol = newCol;
+
+            map[playerRow][playerCol] = 2;
+
+            return MoveResult.ENEMY;
+        }
+
+        if (destination == 4) {
+
+            map[newRow][newCol] = 0;
+
+            map[playerRow][playerCol] = 0;
+
+            playerRow = newRow;
+            playerCol = newCol;
+
+            map[playerRow][playerCol] = 2;
+
+            return MoveResult.TREASURE;
         }
 
         map[playerRow][playerCol] = 0;
@@ -52,6 +82,6 @@ public class GameMap {
 
         map[playerRow][playerCol] = 2;
 
-        return true;
+        return MoveResult.MOVED;
     }
 }

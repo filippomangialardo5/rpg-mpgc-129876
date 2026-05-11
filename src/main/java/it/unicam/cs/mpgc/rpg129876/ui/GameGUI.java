@@ -2,6 +2,7 @@ package it.unicam.cs.mpgc.rpg129876.ui;
 
 import it.unicam.cs.mpgc.rpg129876.game.GameManager;
 import it.unicam.cs.mpgc.rpg129876.map.GameMap;
+import it.unicam.cs.mpgc.rpg129876.map.MoveResult;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -209,6 +210,50 @@ public class GameGUI extends Application {
 
         Scene scene = new Scene(root, 800, 700);
 
+        java.util.function.BiConsumer<Integer, Integer> movePlayer =
+                (dRow, dCol) -> {
+
+                    MoveResult result =
+                            gameMap.movePlayer(dRow, dCol);
+
+                    switch (result) {
+
+                        case WALL:
+
+                            gameLog.appendText(
+                                    "C'è un muro!\n");
+
+                            break;
+
+                        case ENEMY:
+
+                            gameLog.appendText(
+                                    "Hai incontrato un nemico!\n");
+
+                            for (String line : gameManager.attacca()) {
+
+                                gameLog.appendText(line + "\n");
+                            }
+
+                            break;
+
+                        case TREASURE:
+
+                            gameLog.appendText(
+                                    "Hai trovato un tesoro!\n");
+
+                            break;
+
+                        case MOVED:
+
+                            break;
+                    }
+
+                    aggiornaHUD.run();
+
+                    renderMap.run();
+                };
+
         scene.setOnKeyPressed(event -> {
 
             KeyCode key = event.getCode();
@@ -216,19 +261,19 @@ public class GameGUI extends Application {
             switch (key) {
 
                 case W:
-                    gameMap.movePlayer(-1, 0);
+                    movePlayer.accept(-1, 0);
                     break;
 
                 case S:
-                    gameMap.movePlayer(1, 0);
+                    movePlayer.accept(1, 0);
                     break;
 
                 case A:
-                    gameMap.movePlayer(0, -1);
+                    movePlayer.accept(0, -1);
                     break;
 
                 case D:
-                    gameMap.movePlayer(0, 1);
+                    movePlayer.accept(0, 1);
                     break;
             }
 
