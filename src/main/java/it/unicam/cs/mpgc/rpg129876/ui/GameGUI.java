@@ -1,6 +1,7 @@
 package it.unicam.cs.mpgc.rpg129876.ui;
 
 import it.unicam.cs.mpgc.rpg129876.game.GameManager;
+import it.unicam.cs.mpgc.rpg129876.item.Weapon;
 import it.unicam.cs.mpgc.rpg129876.map.GameMap;
 import it.unicam.cs.mpgc.rpg129876.map.MoveResult;
 
@@ -56,6 +57,7 @@ public class GameGUI extends Application {
         Label livelloLabel = new Label();
         Label esperienzaLabel = new Label();
         Label inventarioLabel = new Label();
+        Label armaLabel = new Label();
 
         TextArea gameLog = new TextArea();
         gameLog.setEditable(false);
@@ -89,6 +91,20 @@ public class GameGUI extends Application {
                     "Inventario: "
                             + gameManager.getGiocatore()
                             .getInventario());
+
+            if (gameManager.getGiocatore()
+                    .getArmaEquipaggiata() != null) {
+
+                armaLabel.setText(
+                        "Arma: "
+                                + gameManager.getGiocatore()
+                                .getArmaEquipaggiata());
+
+            } else {
+
+                armaLabel.setText(
+                        "Arma: Nessuna");
+            }
         };
 
         Runnable renderMap = () -> {
@@ -212,6 +228,7 @@ public class GameGUI extends Application {
                 livelloLabel,
                 esperienzaLabel,
                 inventarioLabel,
+                armaLabel,
                 combatButtons,
                 mapGrid,
                 gameLog
@@ -250,12 +267,24 @@ public class GameGUI extends Application {
 
                             gameLog.appendText(
                                     "Hai trovato un tesoro!\n");
-                            Item potion = new Item(
-                                    "Pozione",
-                                    ItemType.POTION);
+
+                            Weapon sword =
+                                    new Weapon(
+                                            "Spada di Ferro",
+                                            5);
 
                             gameManager.getGiocatore()
-                                    .aggiungiItem(potion);
+                                    .aggiungiItem(sword);
+
+                            gameManager.getGiocatore()
+                                    .equipaggiaArma(sword);
+
+                            gameLog.appendText(
+                                    "Hai ottenuto: "
+                                            + sword + "\n");
+
+                            gameLog.appendText(
+                                    "Arma equipaggiata!\n");
 
                             break;
 
