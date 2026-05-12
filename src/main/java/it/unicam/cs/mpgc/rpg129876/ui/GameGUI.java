@@ -21,18 +21,21 @@ import it.unicam.cs.mpgc.rpg129876.item.Item;
 import it.unicam.cs.mpgc.rpg129876.item.ItemType;
 import it.unicam.cs.mpgc.rpg129876.map.MapManager;
 import it.unicam.cs.mpgc.rpg129876.map.MoveResult;
+import it.unicam.cs.mpgc.rpg129876.event.RandomEventManager;
+import it.unicam.cs.mpgc.rpg129876.event.RandomEventType;
 
 public class GameGUI extends Application {
 
     private GameManager gameManager;
-
     private MapManager mapManager;
+    private RandomEventManager randomEventManager;
+
     @Override
     public void start(Stage stage) {
 
         gameManager = new GameManager();
-
         mapManager = new MapManager();
+        randomEventManager = new RandomEventManager();
 
         Image wallImage =
                 new Image(getClass().getResourceAsStream(
@@ -271,6 +274,61 @@ public class GameGUI extends Application {
 
         Scene scene = new Scene(root, 800, 700);
 
+        Runnable randomEvent = () -> {
+
+            RandomEventType event =
+                    randomEventManager.generateEvent();
+
+            switch (event) {
+
+                case NOTHING:
+
+                    break;
+
+                case BONUS_POTION:
+
+                    gameLog.appendText(
+                            "Hai trovato una pozione!\n");
+
+                    break;
+
+                case TRAP:
+
+                    gameLog.appendText(
+                            "Una trappola ti colpisce!\n");
+
+                    gameManager.getGiocatore()
+                            .setVita(
+                                    gameManager
+                                            .getGiocatore()
+                                            .getVita() - 10);
+
+                    break;
+
+                case ENEMY:
+
+                    gameLog.appendText(
+                            "Un nemico casuale appare!\n");
+
+                    for (String line :
+                            gameManager.attacca()) {
+
+                        gameLog.appendText(line + "\n");
+                    }
+
+                    break;
+
+                case GOLD:
+
+                    gameLog.appendText(
+                            "Hai trovato oro!\n");
+
+                    break;
+            }
+
+            aggiornaHUD.run();
+        };
+
         java.util.function.BiConsumer<Integer, Integer>
                 movePlayer = (dRow, dCol) -> {
 
@@ -327,7 +385,7 @@ public class GameGUI extends Application {
                     break;
 
                 case MOVED:
-
+                    randomEvent.run();
                     break;
             }
 
