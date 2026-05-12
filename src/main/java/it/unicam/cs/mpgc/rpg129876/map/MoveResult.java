@@ -5,5 +5,6 @@ public enum MoveResult {
     MOVED,
     WALL,
     ENEMY,
-    TREASURE
+    TREASURE,
+    EXIT
 }

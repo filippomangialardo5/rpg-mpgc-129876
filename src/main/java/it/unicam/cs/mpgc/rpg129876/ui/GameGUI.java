@@ -19,19 +19,20 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import it.unicam.cs.mpgc.rpg129876.item.Item;
 import it.unicam.cs.mpgc.rpg129876.item.ItemType;
+import it.unicam.cs.mpgc.rpg129876.map.MapManager;
+import it.unicam.cs.mpgc.rpg129876.map.MoveResult;
 
 public class GameGUI extends Application {
 
     private GameManager gameManager;
 
-    private GameMap gameMap;
-
+    private MapManager mapManager;
     @Override
     public void start(Stage stage) {
 
         gameManager = new GameManager();
 
-        gameMap = new GameMap();
+        mapManager = new MapManager();
 
         Image wallImage =
                 new Image(getClass().getResourceAsStream(
@@ -52,6 +53,12 @@ public class GameGUI extends Application {
         Image treasureImage =
                 new Image(getClass().getResourceAsStream(
                         "/sprites/treasure.png"));
+
+        Image exitImage =
+                new Image(
+                        getClass()
+                                .getResourceAsStream(
+                                        "/sprites/exit.png"));
 
         Label hpLabel = new Label();
         Label livelloLabel = new Label();
@@ -112,7 +119,10 @@ public class GameGUI extends Application {
 
             mapGrid.getChildren().clear();
 
-            int[][] map = gameMap.getMap();
+            GameMap currentMap =
+                    mapManager.getCurrentMap();
+
+            int[][] map = currentMap.getMap();
 
             for (int row = 0; row < map.length; row++) {
 
@@ -141,6 +151,9 @@ public class GameGUI extends Application {
                         case 4:
                             tileView.setImage(treasureImage);
                             break;
+                        case 5:
+                            tileView.setImage(exitImage);
+                            break;
                     }
 
                     tileView.setFitWidth(48);
@@ -155,6 +168,7 @@ public class GameGUI extends Application {
 
         renderMap.run();
 
+        /*
         northButton.setOnAction(e -> {
 
             gameMap.movePlayer(-1, 0);
@@ -181,7 +195,7 @@ public class GameGUI extends Application {
             gameMap.movePlayer(0, -1);
 
             renderMap.run();
-        });
+        });*/
 
         attackButton.setOnAction(e -> {
 
@@ -257,67 +271,70 @@ public class GameGUI extends Application {
 
         Scene scene = new Scene(root, 800, 700);
 
-        java.util.function.BiConsumer<Integer, Integer> movePlayer =
-                (dRow, dCol) -> {
+        java.util.function.BiConsumer<Integer, Integer>
+                movePlayer = (dRow, dCol) -> {
 
-                    MoveResult result =
-                            gameMap.movePlayer(dRow, dCol);
+            MoveResult result =
+                    mapManager
+                            .getCurrentMap()
+                            .movePlayer(dRow, dCol);
 
-                    switch (result) {
+            switch (result) {
 
-                        case WALL:
+                case WALL:
 
-                            gameLog.appendText(
-                                    "C'è un muro!\n");
+                    gameLog.appendText(
+                            "C'è un muro!\n");
 
-                            break;
+                    break;
 
-                        case ENEMY:
+                case ENEMY:
 
-                            gameLog.appendText(
-                                    "Hai incontrato un nemico!\n");
+                    gameLog.appendText(
+                            "Hai incontrato un nemico!\n");
 
-                            for (String line : gameManager.attacca()) {
+                    for (String line :
+                            gameManager.attacca()) {
 
-                                gameLog.appendText(line + "\n");
-                            }
-
-                            break;
-
-                        case TREASURE:
-
-                            gameLog.appendText(
-                                    "Hai trovato un tesoro!\n");
-
-                            Weapon sword =
-                                    new Weapon(
-                                            "Spada di Ferro",
-                                            5);
-
-                            gameManager.getGiocatore()
-                                    .aggiungiItem(sword);
-
-                            gameManager.getGiocatore()
-                                    .equipaggiaArma(sword);
-
-                            gameLog.appendText(
-                                    "Hai ottenuto: "
-                                            + sword + "\n");
-
-                            gameLog.appendText(
-                                    "Arma equipaggiata!\n");
-
-                            break;
-
-                        case MOVED:
-
-                            break;
+                        gameLog.appendText(line + "\n");
                     }
 
-                    aggiornaHUD.run();
+                    break;
 
-                    renderMap.run();
-                };
+                case TREASURE:
+
+                    gameLog.appendText(
+                            "Hai trovato un tesoro!\n");
+
+                    break;
+
+                case EXIT:
+
+                    boolean changed =
+                            mapManager.nextMap();
+
+                    if (changed) {
+
+                        gameLog.appendText(
+                                "Nuova area sbloccata!\n");
+
+                    } else {
+
+                        gameLog.appendText(
+                                "Dungeon completato!\n");
+                    }
+
+                    break;
+
+                case MOVED:
+
+                    break;
+            }
+
+            aggiornaHUD.run();
+
+            renderMap.run();
+        };
 
         scene.setOnKeyPressed(event -> {
 
